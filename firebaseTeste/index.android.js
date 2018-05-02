@@ -1,53 +1,127 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
+import firebase from 'firebase';
 import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import { AppRegistry, View, Text, Button } from 'react-native';
 
-export default class firebaseTeste extends Component {
+class App extends Component {
+
+  componentWillMount() {
+
+    var config = {
+      apiKey: "AIzaSyBYBJqg6o5OiteGvG7KmsYiBIB2zWQ5cYg",
+      authDomain: "configuracaofirebasereac-f403d.firebaseapp.com",
+      databaseURL: "https://configuracaofirebasereac-f403d.firebaseio.com",
+      projectId: "configuracaofirebasereac-f403d",
+      storageBucket: "configuracaofirebasereac-f403d.appspot.com",
+      messagingSenderId: "51431512471"
+    };
+
+    firebase.initializeApp(config);
+
+  }
+
+  cadastrarUsuario() {
+    var email = "jamilton.cursos@gmail.com";
+    var senha = "jamilton12345";
+
+    const usuario = firebase.auth();
+
+    usuario.createUserWithEmailAndPassword(
+      email,
+      senha
+    ).catch(
+      (erro) => {
+        var mensagemErro = "";
+        if (erro.code == "auth/weak-password") {
+          mensagemErro = "A senha precisa ter no mínimo 6 caracteres!";
+        }
+        //erro.code, erro.message
+        alert(mensagemErro);
+      }
+    );
+
+  }
+
+  verificarUsuarioLogado() {
+
+    var usuario = firebase.auth();
+
+    usuario.onAuthStateChanged(
+      (usuarioAtual) => {
+        if (usuarioAtual) {
+          alert("Usuário está logado");
+        } else {
+          alert("Usuário não está logado");
+        }
+      }
+    );
+
+    /*const usuarioAtual = usuario.currentUser;
+
+    if (usuarioAtual) {
+      alert("Usuário está logado");
+    } else {
+      alert("Usuário não está logado");
+    }*/
+
+  }
+
+  deslogarUsuario() {
+    const usuario = firebase.auth();
+    usuario.signOut();
+  }
+
+  logarUsuario() {
+    var email = "jamilton.cursos2@gmail.com";
+    var senha = "jamilton12345";
+
+    const usuario = firebase.auth();
+    
+    usuario.signInWithEmailAndPassword(
+      email,
+      senha
+    ).catch(
+      (erro) => {
+        alert(erro.message);
+      }
+    );
+
+  }
+
   render() {
+
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
+      <View>
+        <Button
+          onPress={() => { this.cadastrarUsuario(); }}
+          title="Cadastrar Usuário"
+          color="#841584"
+          accessibilityLabel="Cadastrar Usuário"
+        />
+        <Button
+          onPress={() => { this.verificarUsuarioLogado(); }}
+          title="Verificar usuário logado"
+          color="#841584"
+          accessibilityLabel="Verificar usuário logado"
+        />
+
+        <Button
+          onPress={() => { this.deslogarUsuario(); }}
+          title="Deslogar usuário"
+          color="#841584"
+          accessibilityLabel="Deslogar usuário"
+        />
+
+        <Button
+        onPress={() => { this.logarUsuario(); }}
+        title="Logar usuário"
+        color="#841584"
+        accessibilityLabel="Logar usuário"
+      />
+
       </View>
     );
   }
+
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
-
-AppRegistry.registerComponent('firebaseTeste', () => firebaseTeste);
+AppRegistry.registerComponent('firebaseTeste', () => App);
